@@ -26,6 +26,7 @@ public class Reports extends AdminCommonUtilityPage
 	
 	public boolean verifyDownloadDocument(String fileName,int time) throws IOException
 	{
+		timeout(5);
 		return download.verifyDownloadedFile(fileName,time);
 	}
 }
