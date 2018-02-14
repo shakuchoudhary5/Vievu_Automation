@@ -37,7 +37,7 @@ public class RVTC1 extends BasePreCondition
 		
 		
 		expectedResult();
-		if(reports.verifyDownloadDocument(ConstantPage.UNCATEGORIZEDVIDEOS,2))
+		if(reports.verifyDownloadDocument(ConstantPage.UNCATEGORIZEDVIDEOS,10))
 		{
 			pass("Document Downloaded Successfully");
 		}
