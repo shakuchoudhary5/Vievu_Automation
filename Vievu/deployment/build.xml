@@ -1,0 +1,355 @@
+<project name="TestAutomation" default="run.without.update" basedir=".">
+	<description>
+			Automation Framework
+	</description>
+	<property file="${property.file}" />
+	<property file="DefaultBuild.properties" />
+	<echo message="${property.file}" />
+	
+	<!-- setClassPath -->
+	<target name="setClassPath">
+			<path id="TestAutomation.classpath">
+				<fileset dir="${Base.Project}/lib">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="../dist">
+					<include name="TestAutomation_${START_TIME}.jar" />
+				</fileset>
+			</path>
+	</target>
+	
+	<!-- start -->
+	<target name="start" description="Pin the Starting time of Running file">
+			<tstamp>
+				<format property="START_TIME" pattern="MM_dd_yyyy hh_mm_ss_sss" locale="en_GB" />
+			</tstamp>
+		
+			<echo message="Starting: ${START_TIME}" />
+			<property name="before" value="${property.file}" />
+			<script language="javascript">
+				var before = project.getProperty("before");
+				project.setProperty("after", before.replaceAll("/", "_"));
+				arr = project.getProperty("after").split('[.]');
+				project.setProperty('logFile', arr[0]);
+			</script>
+			<echo>logFile => ${logFile}</echo>
+			<antcall target="build" />
+			<record name="D:/Reports/Logs/${logFile}_${START_TIME}.txt" action="start" />
+			<echo message="Start Target Record Name:- D:/Reports/Logs/${logFile}_${START_TIME}.txt" />
+		</target>
+	
+	<!-- property.file.set -->
+	<target name="property.file.set" unless="property.file">
+			<echo message="*********************************************************************" />
+			<input message="What's your properties name?" addproperty="property.file" />
+			<property name="properties.file" value="${properties.file}" />
+			<echo message="*********************************************************************" />
+			<available file="${property.file}" property="isAvailable" />
+			<fail unless="isAvailable" message="File doesn't exist in ${basedir}\${property.file}" />
+			<property file="${property.file}" />
+		</target>
+	
+	<!-- setFilter -->
+	<target name="setFilter">
+			<property name="selenium.browser.driver" value="ChromeDriver" />
+			<property name="report.output.location" value="${basedir}/../" />
+			<property name="report.open.Browser" value="no" />
+			<property name="suit.xml.file" value="${suit.xml.file}" />
+			<property name="Base.Project" value="${Base.Project}" />
+			<!-- DB RELATED DEFAULT CONFIGURATION-->
+			<property name="db.domain" value="${db.domain}" ></property>
+			<property name="test.url" value="https://${test.domain}" />
+			<property name="db.name" value="${db.name}" />
+			<property name="db.port" value="${db.port}" />
+			<property name="db.username" value="${db.username}user" />
+			<property name="db.password" value="${db.password}pass" />
+			<property name="projectRootPath" location="../" />
+
+			<filterset id="myfilterset">
+				<filtersfile file="${property.file}" />
+				<filter token="setPassword" value="${setPassword}" />
+				<filter token="setUsername" value="${setUsername}" />
+				
+				<filter token="report.output.location" value="${report.output.location}" />
+				<filter token="report.open.Browser" value="${report.open.Browser}" />
+				<filter token="selenium.browser.driver" value="${selenium.browser.driver}" />
+				<!-- DB RELATED DEFAULT CONFIGURATION-->
+				<filter token="db.name" value="${db.name}" />
+				<filter token="db.domain" value="${db.domain}" />
+				<filter token="db.port" value="${db.port}" />
+				<filter token="db.username" value="${db.username}" />
+				<filter token="db.password" value="${db.password}" />
+
+				<filter token="test.url" value="${test.url}" />
+				<filter token="suit.xml.file" value="${suit.xml.file}" />
+				<filter token="START_TIME" value="${START_TIME}" />
+				<filter token="property.file" value="${property.file}" />
+				<filter token="Base.Project" value="${Base.Project}" />
+			</filterset>
+		</target>
+	
+	<!-- clean -->
+	<target name="clean">
+		<echo message="Clean Dist Folder...."></echo>
+		<delete dir="../dist"></delete>
+	</target>
+	
+	<!-- build -->
+		<target name="build"  description="Starting Building">
+			<antcall target="clean" />
+			<echo message="Build is Running... make Directory in D:/Reports/Logs" />
+			
+			<mkdir dir="../dist/bin/classes"/>
+		    <mkdir dir="D:/Reports/Logs"/>
+		</target>
+	
+	<!-- compile -->
+	<target name="compile" depends="setClassPath" description="Compilation process is starting" if="property.file">
+			<javac destdir="../dist/bin/classes" debug="true" includeantruntime="true" encoding="iso-8859-1">
+				<classpath refid="TestAutomation.classpath" />
+				<src>
+					<pathelement location="../src/automation" />
+					<pathelement location="${Base.Project}/src/automation" />
+					<pathelement location="${Base.Project}/src/helper" />
+					
+				</src>
+			</javac>
+		
+		<!-- Load the ant contrib lib -->
+				<taskdef resource="net/sf/antcontrib/antlib.xml">
+					<classpath>
+						<pathelement location="${Base.Project}/lib/ant-contrib-1.0b3.jar" />
+					</classpath>
+			</taskdef>
+		
+			<for param="getXml" list="${suit.xml.file}">
+				<sequential>
+					<copy todir="../dist/"  overwrite="true">
+					    <fileset dir="../src/target">
+							<include name="@{getXml}" />
+						</fileset>
+					  </copy>
+				</sequential>
+			</for>
+			<copy todir="../dist/bin/classes" filtering="true">
+				<filterset refid="myfilterset" />
+				<fileset dir="${Base.Project}/src/resource">
+					<include name="**/*.properties" />
+				</fileset>
+			</copy>
+		</target>
+	
+	<!-- jar -->
+		<target name="jar"  description="Compile project file">
+			
+			<jar jarfile="../dist/TestAutomation_${START_TIME}.jar" basedir="../dist/bin/classes"></jar>
+			
+			<echo message="Jar Created../dist/TestAutomation_${START_TIME}.jar...."></echo>
+		</target>
+	
+	<!-- screenshot -->
+	<target name="screenshot">
+					<if>
+						<equals arg1="${report.with.screenshot}" arg2="yes" trim="true" />
+						<then>
+							<taskdef name="EmailHelper" classname="helper.EmailHelper">
+								<classpath>
+									<fileset dir="../dist">
+										<include name="TestAutomation_${START_TIME}.jar" />
+									</fileset>
+									<fileset dir="${Base.Project}/lib">
+										<include name="*.jar" />
+									</fileset>
+								</classpath>
+							</taskdef>
+							<EmailHelper folderPath="${report.output.location}\\Report\\${property.file}\\failRetry\\${START_TIME}\\" />
+						</then>
+					</if>
+					<filterset refid="myfilterset" />
+					<taskdef name="testng" classname="org.testng.TestNGAntTask">
+						<classpath>
+							<pathelement location="${Base.Project}/lib/testng-6.9.4.jar" />
+						</classpath>
+					</taskdef>
+					<testng outputdir="${report.output.location}/Report/${property.file}/failRetry/${START_TIME}/" classpathref="TestAutomation.classpath" haltonfailure="true" useDefaultListeners="false" listeners="org.uncommons.reportng.HTMLReporter">
+						<xmlfileset dir="../dist/" includes="FailRetry.xml" />
+						<sysproperty key="org.uncommons.reportng.title" value="(HQ.- V3) Automation Report" />
+					</testng>
+		</target>
+	
+	<!-- run -->
+	<target name="run">
+		
+		<!-- Load the ant testng lib -->
+		<taskdef name="testng" classname="org.testng.TestNGAntTask">
+			<classpath>
+				<pathelement location="${Base.Project}/lib/testng-6.9.4.jar" />
+			</classpath>
+		</taskdef>
+		
+		<!-- Load the ant contrib lib -->
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<pathelement location="${Base.Project}/lib/ant-contrib-1.0b3.jar" />
+			</classpath>
+	</taskdef>
+		
+		<var name="build.status" value="true" />
+		
+		<for param="getXml" list="${suit.xml.file}">
+				<sequential>
+					<math result="result">
+				        <op op="rint">	
+				            <op op="*">
+				                <num value="500"/>
+				                <op op="random"/>
+				            </op>
+				        </op>
+				    </math>
+					
+					<var name="run.time.create" value="${START_TIME}_${result}"/>
+					
+					<var name="getName" unset="true"/>
+					<property name="getName" value="@{getXml}" />
+				    <script language="javascript">
+						arr = project.getProperty('getName').split('.');
+						project.setProperty('preValue', arr[0]);
+						project.setProperty('postValue', arr[1]);
+				    </script>
+
+					<echo message="build file is ==> @{getXml}" />
+		
+					<trycatch>
+						<try>
+							<testng outputdir="${report.output.location}/Report/${property.file}/${preValue}_${run.time.create}/" classpathref="TestAutomation.classpath" haltonfailure="true" useDefaultListeners="false" listeners="org.uncommons.reportng.HTMLReporter">
+								<xmlfileset dir="../dist/" includes="@{getXml}" />
+								<sysproperty key="org.uncommons.reportng.title" value="${test.domain} report" />
+							</testng>
+						</try>
+						<catch>
+							<var name="build.status" value="false" />
+						</catch>
+					</trycatch>
+					<property name="zipFolderName" value="report_@{getXml}" />
+				    <script language="javascript">
+					    arr = project.getProperty('zipFolderName').split('/');
+					    project.setProperty('pfolder', arr[0]);
+					    project.setProperty('module', arr[1]);
+				    </script>
+				    <mkdir dir="../dist/${pfolder}"/>
+					<zip destfile="../dist/report_@{getXml}.zip" basedir="${report.output.location}/Report/${property.file}/${preValue}_${run.time.create}/" update="true"/>
+				</sequential>
+			</for>
+		</target>
+	
+	<!-- debug -->
+	<target name="debug">
+		
+
+		<!-- Load the ant testng lib -->
+		<taskdef name="testng" classname="org.testng.TestNGAntTask">
+			<classpath>
+				<pathelement location="${Base.Project}/lib/testng-6.9.4.jar" />
+			</classpath>
+		</taskdef>
+		
+		<!-- Load the ant contrib lib -->
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+					<classpath>
+						<pathelement location="${Base.Project}/lib/ant-contrib-1.0b3.jar" />
+					</classpath>
+			</taskdef>
+		
+			<var name="build.status" value="true" />
+		
+			<for param="getXml" list="${suit.xml.file}">
+				<sequential>
+					<math result="result">
+				        <op op="rint">
+				            <op op="*">
+				                <num value="500"/>
+				                <op op="random"/>
+				            </op>
+				        </op>
+				    </math>
+					
+					<var name="run.time.create" value="${START_TIME}_${result}"/>
+									
+						<var name="getName" unset="true"/>
+						<property name="getName" value="@{getXml}" />
+					    <script language="javascript">
+							arr = project.getProperty('getName').split('.');
+							project.setProperty('preValue', arr[0]);
+							project.setProperty('postValue', arr[1]);
+					    </script>
+					
+					<echo message="build file is ==> @{getXml}" />
+					
+					<trycatch>
+						<try>
+							<testng outputdir="${report.output.location}/Report/${property.file}/${preValue}_${run.time.create}" classpathref="TestAutomation.classpath" haltonfailure="false" useDefaultListeners="false" listeners="org.uncommons.reportng.HTMLReporter">
+								<xmlfileset dir="../dist/" includes="@{getXml}" />
+								<jvmarg value="-Xdebug" />
+								<jvmarg value="-Xnoagent" />
+								<jvmarg value="-Xrunjdwp:transport=dt_socket,address=5432,server=y,suspend=y" />
+								<sysproperty key="org.uncommons.reportng.title" value="${test.domain} report" />
+							</testng>
+						</try>
+						<catch>
+							<var name="build.status" value="false" />
+						</catch>
+					</trycatch>
+					<zip destfile="../dist/report_@{getXml}.zip" basedir="${report.output.location}/Report/${property.file}/${preValue}_${run.time.create}/" update="true"/>
+				</sequential>
+			</for>		
+		</target>
+	
+	<!-- openBrowser -->
+	<target name="openBrowser">
+			<if>
+				<not>
+					<equals arg1="${report.open.Browser}" arg2="no" trim="true" />
+				</not>
+				<then>
+					<exec executable="C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" failonerror="yes" failifexecutionfails="yes">
+						<arg line="'${report.output.location}\\Report\\${property.file}\\${preValue}_${run.time.create}\\html\\index.html'" />
+					</exec>
+				</then>
+			</if>
+		</target>
+	
+	<!-- end -->
+	<target name="end" description="Pin the Ending time of Running file">
+			<tstamp>
+				<format property="END_TIME" pattern="HH_mm_ss" locale="en_GB" />
+			</tstamp>
+			<echo message="Finished: ${END_TIME}" />
+	</target>
+	
+	<!-- run.without.update -->
+	<target name="run.without.update" depends="start,property.file.set,setFilter,compile,jar,run,screenshot">
+			<antcall target="end" />
+			<antcall target="openBrowser" />
+				<fileset dir="${Base.Project}/lib/ant-contrib-1.0b3.jar">
+					<include name="**/*.jar" />
+				</fileset>
+			<if>
+				<not>
+					<equals arg1="${build.status}" arg2="true" trim="true" />
+				</not>
+				<then>
+					<echo message="**************************************************" />
+					<echo message="EXECUTION FAIL PLEASE CHECK REPORT" />
+					<echo message="**************************************************" />
+					<fail>FAIL!</fail>
+				</then>
+			</if>
+		</target>
+	
+	<!-- run.debug -->
+	<target name="run.debug" depends="start,property.file.set,setFilter,clean,build,compile,jar,debug">
+				<antcall target="end" />
+				<antcall target="openBrowser" />
+	</target>
+	
+</project>

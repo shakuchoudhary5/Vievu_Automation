@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="VideosAndFilesModule">
+
+	<test name="VVTC1">
+		<classes>
+			<class name="automation.tcRepository.VideosAndFiles.VVTC1"/>
+		</classes>
+	</test>
+	
+</suite>

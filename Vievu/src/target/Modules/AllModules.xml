@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="ALl Modules">
+ 	<suite-file>
+        <suite-file path="../src/target/Cases.xml"/>
+        <suite-file path="../src/target/Login.xml"/>
+        <suite-file path="../src/target/VideosAndFiles.xml"/>
+ 	 </suite-file>
+</suite>

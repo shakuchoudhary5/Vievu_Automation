@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="LoginModule">
+
+	<test name="LVTC1">
+		<classes>
+			<class name="automation.tcRepository.Login.LVTC1"/>
+		</classes>
+	</test>
+	
+</suite>

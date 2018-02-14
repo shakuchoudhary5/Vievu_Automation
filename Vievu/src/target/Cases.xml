@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="CasesModule">
+
+	<test name="CVTC1">
+		<classes>
+			<class name="automation.tcRepository.Cases.CVTC1"/>
+		</classes>
+	</test>
+	
+</suite>
