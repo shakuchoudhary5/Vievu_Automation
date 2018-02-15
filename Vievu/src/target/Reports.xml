@@ -8,4 +8,8 @@
 		</classes>
 	</test>
 	
+	<listeners>
+		<listener class-name="helper.CustomisedListener" />
+	</listeners>
+	
 </suite>
