@@ -8,7 +8,6 @@ import automation.coreClasses.ConstantPage;
 import automation.coreClasses.EnumPage.BannerOptions;
 import automation.pageObject.AdminCommonUtilityPage;
 import automation.pageObject.Reports;
-import helper.DownloadVerifier;
 
 public class RVTC1 extends BasePreCondition
 {
@@ -27,7 +26,6 @@ public class RVTC1 extends BasePreCondition
 		AdminCommonUtilityPage adminCommonUtilityPage=(AdminCommonUtilityPage) resultpage;
 		resultpage=adminCommonUtilityPage.gotoTopNavigation(BannerOptions.Reports);
 		
-//		resultpage.detectPage();
 		Reports reports=(Reports) resultpage; 
 		
 		Reporter.log("Click on Uncategorized Videos (csv) option for Download Reports");

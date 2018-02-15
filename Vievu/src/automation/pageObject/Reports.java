@@ -14,19 +14,19 @@ public class Reports extends AdminCommonUtilityPage
 	
 	public Reports(WebDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void clickOnUncategorizedVideos() throws IOException
 	{
 		download.moveAllFiles();
+		timeIntervel(1);
 		click(By.xpath(".//div[@class='side-bar-buttons']//a[normalize-space(.)='Uncategorized Videos (csv)']"));
-		timeIntervel();
+		timeIntervel(3);
 	}
 	
 	public boolean verifyDownloadDocument(String fileName,int time) throws IOException
 	{
-		timeIntervel(5);
+		timeIntervel(1);
 		return download.verifyDownloadedFile(fileName,time);
 	}
 }

@@ -54,6 +54,7 @@
 			<property name="selenium.browser.driver" value="ChromeDriver" />
 			<property name="report.output.location" value="${basedir}/../" />
 			<property name="report.open.Browser" value="no" />
+			<property name="report.with.screenshot" value="yes" />
 			<property name="suit.xml.file" value="${suit.xml.file}" />
 			<property name="Base.Project" value="${Base.Project}" />
 			<!-- DB RELATED DEFAULT CONFIGURATION-->
@@ -70,9 +71,11 @@
 				<filter token="setPassword" value="${setPassword}" />
 				<filter token="setUsername" value="${setUsername}" />
 				
+				<filter token="report.with.screenshot" value="${report.with.screenshot}" />
 				<filter token="report.output.location" value="${report.output.location}" />
 				<filter token="report.open.Browser" value="${report.open.Browser}" />
 				<filter token="selenium.browser.driver" value="${selenium.browser.driver}" />
+				
 				<!-- DB RELATED DEFAULT CONFIGURATION-->
 				<filter token="db.name" value="${db.name}" />
 				<filter token="db.domain" value="${db.domain}" />
@@ -147,31 +150,6 @@
 			<echo message="Jar Created../dist/TestAutomation_${START_TIME}.jar...."></echo>
 		</target>
 	
-	<!-- screenshot -->
-	<target name="screenshot">
-					<if>
-						<equals arg1="${report.with.screenshot}" arg2="yes" trim="true" />
-						<then>
-							<taskdef name="EmailHelper" classname="helper.EmailHelper">
-								<classpath>
-									<fileset dir="../dist">
-										<include name="TestAutomation_${START_TIME}.jar" />
-									</fileset>
-									<fileset dir="${Base.Project}/lib">
-										<include name="*.jar" />
-									</fileset>
-								</classpath>
-							</taskdef>
-						</then>
-					</if>
-					<filterset refid="myfilterset" />
-					<taskdef name="testng" classname="org.testng.TestNGAntTask">
-						<classpath>
-							<pathelement location="${Base.Project}/lib/testng-6.9.4.jar" />
-						</classpath>
-					</taskdef>
-		</target>
-	
 	<!-- run -->
 	<target name="run">
 		
@@ -211,7 +189,26 @@
 						project.setProperty('preValue', arr[0]);
 						project.setProperty('postValue', arr[1]);
 				    </script>
-
+					
+					
+					<if>
+						<equals arg1="${report.with.screenshot}" arg2="yes" trim="true" />
+						<then>
+							<taskdef name="EmailHelper" classname="helper.EmailHelper">
+								<classpath>
+									<fileset dir="../dist">
+										<include name="TestAutomation_${START_TIME}.jar" />
+									</fileset>
+									<fileset dir="${Base.Project}/lib">
+										<include name="*.jar" />
+									</fileset>
+								</classpath>
+							</taskdef>
+							<EmailHelper folderPath="${report.output.location}/Report/${property.file}/${preValue}_${run.time.create}/" />
+						</then>
+					</if>
+					
+					
 					<echo message="build file is ==> @{getXml}" />
 		
 					<trycatch>
@@ -231,6 +228,7 @@
 					    project.setProperty('pfolder', arr[0]);
 					    project.setProperty('module', arr[1]);
 				    </script>
+
 				    <mkdir dir="../dist/${pfolder}"/>
 					<zip destfile="../dist/report_@{getXml}.zip" basedir="${report.output.location}/Report/${property.file}/${preValue}_${run.time.create}/" update="true"/>
 				</sequential>
@@ -278,6 +276,23 @@
 							project.setProperty('postValue', arr[1]);
 					    </script>
 					
+					<if>
+						<equals arg1="${report.with.screenshot}" arg2="yes" trim="true" />
+						<then>
+							<taskdef name="EmailHelper" classname="helper.EmailHelper">
+								<classpath>
+									<fileset dir="../dist">
+										<include name="TestAutomation_${START_TIME}.jar" />
+									</fileset>
+									<fileset dir="${Base.Project}/lib">
+										<include name="*.jar" />
+									</fileset>
+								</classpath>
+							</taskdef>
+							<EmailHelper folderPath="${report.output.location}/Report/${property.file}/${preValue}_${run.time.create}/" />
+						</then>
+					</if>
+		
 					<echo message="build file is ==> @{getXml}" />
 					
 					<trycatch>
@@ -322,7 +337,7 @@
 	</target>
 	
 	<!-- run.without.update -->
-	<target name="run.without.update" depends="start,property.file.set,setFilter,compile,jar,run,screenshot">
+	<target name="run.without.update" depends="start,property.file.set,setFilter,compile,jar,run">
 			<antcall target="end" />
 			<antcall target="openBrowser" />
 				<fileset dir="${Base.Project}/lib/ant-contrib-1.0b3.jar">
