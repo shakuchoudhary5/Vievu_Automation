@@ -15,7 +15,7 @@ public class CVTC1 extends BasePreCondition
 	void Scenario01() throws Exception
 	{
 			testCaseDevelopedBy("Shakuntala Choudhary", "Verify Add Cases Functionality");
-			testcaseID("VTC3");
+			testcaseID("CVTC1");
 			
 			scenarioHeading(1, "Add One Case");
 			

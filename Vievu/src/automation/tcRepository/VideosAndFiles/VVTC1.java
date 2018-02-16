@@ -18,7 +18,7 @@ public class VVTC1 extends BasePreCondition
 	void Scenario01() throws Exception
 	{
 			testCaseDevelopedBy("Shakuntala Choudhary", "Add Video From Computer into System and Verify");
-			testcaseID("VTC2");
+			testcaseID("VVTC1");
 			scenarioHeading(1, "Add Video and Verify Comment");
 			
 			Reporter.log("1. Login Into System.");
@@ -66,51 +66,93 @@ public class VVTC1 extends BasePreCondition
 	@Test(priority=2)
 	void Scenario02() throws Exception
 	{
-		scenarioHeading(2, "Verify Shared Options Of Video");
+		scenarioHeading(2, "Verify Shared Options Of Video Using Uploaded Date");
 		
 		Reporter.log("1. Login Into System.");
 		Reporter.log("2. Click on Videos & Files From Banner.");
 		getLocation();
 		resultpage=resultpage.detectPage();
 		
-		Reporter.log("3. Click on Comment Button");
-		homePage.gotoLeftNavigation(LeftOptions.Comment);
+		Reporter.log("3. Click on Upload Date");
+		homePage.gotoLeftNavigation(LeftOptions.Upload_Date);
 		
-		Reporter.log("4. Search Video Using Given Comment");
-		homePage.SearchTemplates(ConstantPage.EXITVIDEOCOMMENT);
+		Reporter.log("4. Select From Date");
+		homePage.datePickerFrom("Feb",2018,15);
+		
+		Reporter.log("4. Select To Date");
+		homePage.datePickerTo("Feb",2018,16);
 		
 		Reporter.log("5. Click On Search Button");
 		homePage.clickOnSearch();
 		
-		Reporter.log("6. Verify Video Name and Comment Values on Uploaded Video");
+		Reporter.log("6. Click on Any one Video");
+		homePage.clickOnVideo();
+	
+		Reporter.log("7. Click on Share Icon of Videos");
+		homePage.clickOnShareIcon();
+	
+		Reporter.log("8. Verify Share Options");
 		
 		expectedResult();
-		if(homePage.verifyValuesOfResultVideos(ConstantPage.EXISTVIDEONAME,ConstantPage.EXITVIDEOCOMMENT))
+		if(homePage.verifyShareOptions())
 		{
-			pass("Verify Video Name and Comment Values are Dispaly on Uploaded Video");
-			
-			Reporter.log(" ");
-			Reporter.log("7. Click on Share Icon of Videos");
-			homePage.clickOnShareIcon();
-			
-			Reporter.log("8. Verify Share Options");
-			
-			expectedResult();
-			if(homePage.verifyShareOptions())
-			{
-				
-				pass("Share All Options Are Display Properly");
-			}
-			else
-			{
-				fail("Share All Options Are Not Display Properly");
-				Assert.assertTrue(false);
-			}
+			pass("Share All Options Are Display Properly");
 		}
 		else
 		{
-			fail("Verify Video Name and Comment Values are not Dispaly on Uploaded Video");
+			fail("Share All Options Are Not Display Properly");
 			Assert.assertTrue(false);
 		}
 	}
+	
+//	@Test(priority=2)
+//	void Scenario02() throws Exception
+//	{
+//		scenarioHeading(2, "Verify Shared Options Of Video");
+//		
+//		Reporter.log("1. Login Into System.");
+//		Reporter.log("2. Click on Videos & Files From Banner.");
+//		getLocation();
+//		resultpage=resultpage.detectPage();
+//		
+//		Reporter.log("3. Click on Comment Button");
+//		homePage.gotoLeftNavigation(LeftOptions.Comment);
+//		
+//		Reporter.log("4. Search Video Using Given Comment");
+//		homePage.SearchTemplates(ConstantPage.EXITVIDEOCOMMENT);
+//		
+//		Reporter.log("5. Click On Search Button");
+//		homePage.clickOnSearch();
+//		
+//		Reporter.log("6. Verify Video Name and Comment Values on Uploaded Video");
+//		
+//		expectedResult();
+//		if(homePage.verifyValuesOfResultVideos(ConstantPage.EXISTVIDEONAME,ConstantPage.EXITVIDEOCOMMENT))
+//		{
+//			pass("Verify Video Name and Comment Values are Dispaly on Uploaded Video");
+//			
+//			Reporter.log(" ");
+//			Reporter.log("7. Click on Share Icon of Videos");
+//			homePage.clickOnShareIcon();
+//			
+//			Reporter.log("8. Verify Share Options");
+//			
+//			expectedResult();
+//			if(homePage.verifyShareOptions())
+//			{
+//				
+//				pass("Share All Options Are Display Properly");
+//			}
+//			else
+//			{
+//				fail("Share All Options Are Not Display Properly");
+//				Assert.assertTrue(false);
+//			}
+//		}
+//		else
+//		{
+//			fail("Verify Video Name and Comment Values are not Dispaly on Uploaded Video");
+//			Assert.assertTrue(false);
+//		}
+//	}
 }

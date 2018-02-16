@@ -12,7 +12,7 @@ public class LVTC1 extends BasePreCondition
 	void scenario01() throws Exception
 	{
 		testCaseDevelopedBy("Shakuntala Choudhary", "Login into System with valid User.");
-		testcaseID("VTC1");
+		testcaseID("LVTC1");
 		
 		scenarioHeading(1,"Login With System Admin");
 		

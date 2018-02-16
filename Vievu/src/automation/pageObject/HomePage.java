@@ -2,13 +2,18 @@ package automation.pageObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import automation.Constant;
 import automation.coreClasses.EnumPage.VideosSubOptions;
+import javafx.scene.input.KeyCombination.ModifierValue;
 
 public class HomePage extends AdminCommonUtilityPage
 { 
+	
 	
 	public HomePage(WebDriver driver) {
 		super(driver);
@@ -24,6 +29,7 @@ public class HomePage extends AdminCommonUtilityPage
 	public void gotoUploadFileFromComputer(String fileName) throws IOException
 	{
 		String pATH= new File(Constant.filepath).getCanonicalPath().trim();
+		timeIntervel(1);
 		Runtime.getRuntime().exec(pATH+"/videos/"+fileName);
 		timeIntervel();
 		waitForParticularElement(By.xpath(".//*[@id='saveButton' and @disabled='']"), Seconds);
@@ -108,5 +114,13 @@ public class HomePage extends AdminCommonUtilityPage
 		return isDisplayedAllXPath(By.xpath(".//ul[@class='dropdown-menu']//a[text()='Share with User']"),
 			By.xpath(".//ul[@class='dropdown-menu']//a[text()='Share with Email']"),
 			By.xpath(".//ul[@class='dropdown-menu']//a[text()='Share by Link']"));
+	}
+	
+	public void clickOnVideo() throws IOException
+	{
+		click(By.xpath(".//div[contains(@class,'list-group')]//a[1]"));
+		timeIntervel();
+		waitUntilElementDisplays(By.xpath(".//*[@id='loading-overlay' and @style='']"));
+		timeIntervel();
 	}
 }

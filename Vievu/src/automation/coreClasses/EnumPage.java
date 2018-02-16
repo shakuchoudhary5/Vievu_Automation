@@ -4,7 +4,7 @@ public class EnumPage
 {
 	public enum LeftOptions
 	{
-		 Add,Add_Case,Comment
+		 Add,Add_Case,Comment,Upload_Date
 	}
 	
 	public enum BannerOptions
